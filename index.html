@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ad</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  background: #000;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* FADE */
+.fade {
+  position: fixed;
+  inset: 0;
+  transition: opacity .3s ease;
+}
+.fade.out { opacity: 0; }
+
+/* IMAGE */
+.image-wrap {
+  position: fixed;
+  inset: 0;
+}
+.image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* UI */
+.ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* TIMER */
+.timer {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 52px;
+  height: 52px;
+}
+
+.timer svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.track {
+  fill: none;
+  stroke: rgba(255,255,255,.3);
+  stroke-width: 4;
+}
+
+.progress {
+  fill: none;
+  stroke: #22c55e;
+  stroke-width: 4;
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  transition: stroke-dashoffset 3s linear;
+}
+
+.count {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* SKIP */
+.skip {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.7);
+  border: 1px solid rgba(255,255,255,.35);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.skip svg {
+  width: 15px;
+  height: 15px;
+  stroke: #fff;
+  stroke-width: 2.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="fade" id="fade">
+
+  <!-- LOCAL IMAGE (INSTANT LOAD) -->
+  <div class="image-wrap">
+    <img src="61.png" alt="Ad" id="adImage">
+  </div>
+
+  <div class="ui">
+    <div class="skip" id="skipBtn">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </div>
+
+    <div class="timer">
+      <svg viewBox="0 0 56 56">
+        <circle class="track" cx="28" cy="28" r="25"/>
+        <circle class="progress" cx="28" cy="28" r="25"/>
+      </svg>
+      <div class="count" id="count">3</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const REDIRECT_URL = "https://sitecraft.top";
+
+const fade = document.getElementById("fade");
+const skip = document.getElementById("skipBtn");
+const progress = document.querySelector(".progress");
+const countEl = document.getElementById("count");
+const img = document.getElementById("adImage");
+
+let time = 3;
+let locked = true;
+
+/* Timer ring */
+requestAnimationFrame(() => {
+  progress.style.strokeDashoffset = "0";
+});
+
+/* Countdown */
+const timer = setInterval(() => {
+  time--;
+  countEl.textContent = time;
+
+  if (time <= 0) {
+    clearInterval(timer);
+    skip.style.display = "flex";
+    locked = false;
+  }
+}, 1000);
+
+/* Redirect */
+function go() {
+  if (locked) return;
+  fade.classList.add("out");
+  setTimeout(() => {
+    window.location.href = REDIRECT_URL;
+  }, 300);
+}
+
+skip.onclick = go;
+img.onclick = go;
+</script>
+
+</body>
+</html>
